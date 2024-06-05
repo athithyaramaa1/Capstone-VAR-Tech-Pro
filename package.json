@@ -1,0 +1,13 @@
+{
+  "name": "capstone-var-tech-pro",
+  "version": "1.0.0",
+  "description": "Dynamic end to end amazing E-Commerce application!",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "V ATHITHYA RAMAA",
+  "license": "ISC"
+}
