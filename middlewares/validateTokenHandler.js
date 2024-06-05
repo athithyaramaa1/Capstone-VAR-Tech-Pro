@@ -10,7 +10,9 @@ const ROLES = {
 const validateToken = asyncHandler(async (req, res, next) => {
   const authHeader = req.headers.authorization || req.headers.Authorization;
   if (!authHeader || !authHeader.startsWith("Bearer")) {
-    return res.status(401).json({ error: "Authorization header missing or invalid" });
+    return res
+      .status(401)
+      .json({ error: "Authorization header missing or invalid" });
   }
 
   const token = authHeader.split(" ")[1];
@@ -28,4 +30,30 @@ const validateToken = asyncHandler(async (req, res, next) => {
   }
 });
 
-module.exports = {validateToken};
+const isAdmin = asyncHandler(async (req, res, next) => {
+  try {
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET is not set in environment variables.");
+      return res.status(500).json({ error: "Server misconfiguration" });
+    }
+
+    const user = await UserModel.findById(req.user._id);
+    if (!user) {
+      console.error("User not found:", req.user._id);
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (user.role === undefined || user.role !== ROLES.ADMIN) {
+      return res
+        .status(403)
+        .json({ error: "You are not authorized to perform this action" });
+    }
+
+    next();
+  } catch (err) {
+    console.error("isAdmin Middleware Error:", err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+module.exports = { validateToken, isAdmin };
