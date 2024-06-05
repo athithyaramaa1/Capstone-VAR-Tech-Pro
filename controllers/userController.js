@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
+const { hashPassword, comparePassword } = require("../helpers/userHelper");
 
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, phone, address, question } = req.body;
@@ -89,3 +90,8 @@ const loginUser = asyncHandler(async (req, res) => {
     token,
   });
 });
+
+module.exports = {
+  registerUser,
+  loginUser,
+};
