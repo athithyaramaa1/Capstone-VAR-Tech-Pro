@@ -1,0 +1,148 @@
+.footer {
+  background-color: #242424;
+  color: white;
+  padding: 40px 0;
+}
+
+.section {
+  margin-bottom: 40px;
+}
+
+.heading {
+  color: #e31c1c;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.social-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #2b85ac;
+  color: white;
+  text-decoration: none;
+}
+
+.social-button:hover {
+  opacity: 0.8;
+}
+
+.social-button svg {
+  font-size: 20px;
+}
+
+.glow-text {
+    font-size: 48px;
+    font-weight: bold;
+    color: white;
+    animation: glow-animation 1s infinite alternate;
+  }
+  
+  @keyframes glow-animation {
+    0% {
+        text-shadow: 0 0 5px #fffF00, 0 0 5px #ff0000, 0 0 15px #ff6200, 0 0 20px #ff0000;
+    }
+  
+    50% {
+        text-shadow: 0 0 10px #fffF00, 0 0 10px #ff0000, 0 0 30px #ff6200, 0 0 40px #ff0000;
+    }
+  
+    100% {
+        text-shadow: 0 0 5px #fffF00, 0 0 5px #ff0000, 0 0 15px #ff6200, 0 0 20px #ff0000;
+    }
+  }
+.rainbow-text-loop {
+  font-size: 1.5rem;
+  display: inline-block;
+  margin-top: 1rem;
+  text-shadow: 2px 2px 4px #000000;
+  -webkit-animation: rainbow 5s infinite;
+}
+
+@-webkit-keyframes rainbow {
+  0% {
+    color: orange;
+  }
+  10% {
+    color: purple;
+  }
+  20% {
+    color: red;
+  }
+  30% {
+    color: CadetBlue;
+  }
+  40% {
+    color: yellow;
+  }
+  50% {
+    color: coral;
+  }
+  60% {
+    color: green;
+  }
+  70% {
+    color: cyan;
+  }
+  80% {
+    color: DeepPink;
+  }
+  90% {
+    color: DodgerBlue;
+  }
+  100% {
+    color: orange;
+  }
+}
+
+.section .link {
+  color: #ff8c00; /* Bright orange color */
+  text-decoration: none;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.section .link:hover {
+  text-decoration: none;
+  color: #e1ff00; /* Hover color */
+}
+
+span{
+    margin-left: 10px;
+    cursor: pointer;
+    color: #e1ff00;
+}
+
+span:hover{
+    color: lime;
+}
+
+.footer .copyright {
+    /* Ensure these links are aligned properly */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .footer .copyright a {
+    /* Add margin to separate the links */
+    margin: 0 5px;
+  }
+  
+  /* Style the links */
+  .footer .copyright a {
+    color: orange;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .footer .copyright a:hover {
+    text-decoration: underline;
+  }
