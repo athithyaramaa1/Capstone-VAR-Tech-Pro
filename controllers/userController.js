@@ -91,7 +91,12 @@ const loginUser = asyncHandler(async (req, res) => {
   });
 });
 
+const testController = (req, res) => {
+  res.send("Protected route");
+};
+
 module.exports = {
   registerUser,
   loginUser,
+  testController,
 };
