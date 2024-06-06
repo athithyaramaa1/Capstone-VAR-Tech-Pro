@@ -1,5 +1,6 @@
 import Header from "./Header";
 import Footer from "./Footer";
+//React Helmet for SEO
 import { Helmet } from "react-helmet";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -21,6 +22,8 @@ const Layout = ({ children, title, description, keywords, author }) => {
     </div>
   );
 };
+
+//Adding Search Engine Optimization using React Helmet
 
 Layout.defaultProps = {
   title: "VAR TECH PRO",
