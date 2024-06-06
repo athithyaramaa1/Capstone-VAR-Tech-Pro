@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage";
 import NotFound from "./pages/NotFound";
 import Policy from "./pages/Policy";
 import SplashPage from "./pages/Splash Page/App";
+//Adding Login Signup routes
 import Login from "./pages/Auth/Login";
 import SignUp from "./pages/Auth/Signup";
 
@@ -17,7 +18,6 @@ function App() {
       <Route path="/policy" element={<Policy />} />
       <Route path="/*" element={<NotFound />} />
       <Route path="/login" element={<Login />} />
-
       <Route path="/signup" element={<SignUp />} />
     </Routes>
   );
