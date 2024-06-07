@@ -19,6 +19,8 @@ router.get("/user-auth", validateToken, (req, res) => {
   res.status(200).send({ user: true });
 });
 
-
+router.get("/admin-auth", validateToken, isAdmin, (req, res) => {
+  res.status(200).send({ admin: true });
+});
 
 module.exports = router;
