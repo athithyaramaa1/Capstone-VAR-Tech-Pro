@@ -7,6 +7,7 @@ import Policy from "./pages/Policy";
 import SplashPage from "./pages/Splash Page/App";
 import Login from "./pages/Auth/Login";
 import SignUp from "./pages/Auth/Signup";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       <Route path="/*" element={<NotFound />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
     </Routes>
   );
 }
