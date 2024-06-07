@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 const dotenv = require("dotenv").config();
 const connectDB = require("./config/db");
+const errorHandler = require("./middleware/errorHandler");
 
 connectDB();
 const app = express();
@@ -17,6 +18,8 @@ app.get("/", (req, res) => {
 });
 
 const PORT = process.env.PORT || 5004;
+app.use(errorHandler);
+
 app.listen(PORT, () => {
   console.log(`App started in port ${PORT}`);
 });
