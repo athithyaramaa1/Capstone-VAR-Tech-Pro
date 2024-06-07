@@ -13,4 +13,10 @@ const router = express.Router();
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/test", validateToken, isAdmin, testController);
+router.post("/forgot-password", forgotPasswordController);
+
+router.get("/user-auth", validateToken, (req, res) => {
+  res.status(200).send({ user: true });
+});
+
 module.exports = router;

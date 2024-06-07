@@ -95,8 +95,33 @@ const testController = (req, res) => {
   res.send("Protected route");
 };
 
+const forgotPasswordController = asyncHandler(async (req, res) => {
+  const { email, question, newPassword } = req.body;
+  if (!email || !question || !newPassword) {
+    return res.status(401).json({ error: "All fields are mandatory" });
+  }
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.status(401).json({ error: "Email not found" });
+  }
+
+  if (user.question !== question) {
+    return res
+      .status(401)
+      .json({ error: "You are not allowed to make changes" });
+  }
+
+  const hashedPassword = await hashPassword(newPassword);
+  user.password = hashedPassword;
+  await user.save();
+
+  res.status(200).json({ message: "Password reset successfully" });
+});
+
 module.exports = {
   registerUser,
   loginUser,
   testController,
+  forgotPasswordController,
 };
