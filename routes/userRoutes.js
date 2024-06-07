@@ -3,6 +3,7 @@ const {
   registerUser,
   loginUser,
   testController,
+  forgotPasswordController
 } = require("../controllers/userController");
 const {
   validateToken,
