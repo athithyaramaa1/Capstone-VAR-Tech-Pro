@@ -2,7 +2,7 @@ const express = require("express");
 const {
   isAdmin,
   validateToken,
-} = require("../middleware/validateTokenHandler");
+} = require("../middlewares/validateTokenHandler");
 const { loginUser } = require("../controllers/userController");
 const {
   createCategoryController,

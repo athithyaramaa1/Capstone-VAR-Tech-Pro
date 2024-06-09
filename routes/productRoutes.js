@@ -4,7 +4,7 @@ const formidable = require("express-formidable");
 const {
   validateToken,
   isAdmin,
-} = require("../middleware/validateTokenHandler");
+} = require("../middlewares/validateTokenHandler");
 const {
   createProductController,
   getProductsController,
@@ -24,9 +24,8 @@ router.post(
 
 router.get("/get-products", getProductsController);
 
-router.get("/product-photo", productPhotoController);
+router.get("/product-photo/:pid", productPhotoController);
 
 router.get("/get-product/:slug", getProductController);
-
 
 module.exports = router;
