@@ -10,6 +10,8 @@ const {
   getProductsController,
   getProductController,
   productPhotoController,
+  deleteProductController,
+  updateProductController,
 } = require("../controllers/productController");
 
 const router = express.Router();
@@ -27,5 +29,20 @@ router.get("/get-products", getProductsController);
 router.get("/product-photo/:pid", productPhotoController);
 
 router.get("/get-product/:slug", getProductController);
+
+router.delete(
+  "delete-product/:id",
+  isAdmin,
+  validateToken,
+  deleteProductController
+);
+
+router.put(
+  "/update-product/:id",
+  validateToken,
+  isAdmin,
+  formidable(),
+  updateProductController
+);
 
 module.exports = router;

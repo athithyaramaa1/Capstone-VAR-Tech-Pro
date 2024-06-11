@@ -133,9 +133,72 @@ const productPhotoController = asyncHandler(async (req, res) => {
   }
 });
 
+const deleteProductController = asyncHandler(async (req, res) => {
+  try {
+    await Product.findByIdAndDelete(req.params.id).select("-photo");
+    res.status(202).json({
+      message: "Product deleted successfully",
+      product,
+    });
+  } catch (err) {
+    console.error("Error in deleting product", err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+const updateProductController = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { name, description, price, category, quantity, shipping } = req.fields;
+  const { photo } = req.files;
+
+  if (!validateProductFields(req.fields)) {
+    return res.status(400).json({ message: "All fields are mandatory" });
+  }
+
+  if (photo && photo.size > 1000000) {
+    return res.status(400).json({ message: "Photo size should be less than 1MB" });
+  }
+
+  try {
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    product.name = name;
+    product.slug = slugify(name, { lower: true });
+    product.description = description;
+    product.price = price;
+    product.category = category;
+    product.quantity = quantity;
+    product.shipping = shipping;
+
+    if (photo) {
+      try {
+        product.photo.data = fs.readFileSync(photo.path);
+        product.photo.contentType = photo.type;
+      } catch (error) {
+        console.error("Error reading photo file:", error);
+        return res.status(500).json({ error: "Error reading photo file" });
+      }
+    }
+
+    await product.save();
+    res.status(200).json({
+      message: "Product updated successfully",
+      product,
+    });
+  } catch (error) {
+    console.error("Error in updating product:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = {
   createProductController,
   getProductsController,
   getProductController,
   productPhotoController,
+  deleteProductController,
+  updateProductController,
 };
