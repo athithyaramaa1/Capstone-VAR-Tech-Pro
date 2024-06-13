@@ -55,7 +55,7 @@ const CreateCategory = () => {
         `${import.meta.env.VITE_APP_API}api/v1/category/categories`
       );
       if (data && Array.isArray(data.categories)) {
-        setCategories(data.categories);
+        setCategories(data?.categories);
       } else {
         console.error("Unexpected response format:", data);
         toast.error("Error in getting Categories");
