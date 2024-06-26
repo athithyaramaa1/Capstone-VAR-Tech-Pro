@@ -26,8 +26,11 @@ export default function Sidebar() {
   const handleCategory = () => {
     navigate("/dashboard/admin/create-category");
   };
-  const handleProducts = () => {
+  const handleCreateProducts = () => {
     navigate("/dashboard/admin/create-products");
+  };
+  const handleProducts = () => {
+    navigate("/dashboard/admin/products");
   };
   const handleUsers = () => {
     navigate("/dashboard/admin/users");
@@ -127,10 +130,18 @@ export default function Sidebar() {
             </ListItemButton>
           </ListItem>
           <ListItem>
-            <ListItemButton onClick={handleProducts}>
+            <ListItemButton onClick={handleCreateProducts}>
               <AssignmentRoundedIcon />
               <ListItemContent>
                 <Typography level="title-sm">Create Products</Typography>
+              </ListItemContent>
+            </ListItemButton>
+          </ListItem>
+          <ListItem>
+            <ListItemButton onClick={handleProducts}>
+              <AssignmentRoundedIcon />
+              <ListItemContent>
+                <Typography level="title-sm">Products</Typography>
               </ListItemContent>
             </ListItemButton>
           </ListItem>
