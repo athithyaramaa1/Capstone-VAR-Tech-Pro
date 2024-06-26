@@ -13,6 +13,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import CreateProducts from "./pages/admin/CreateProducts";
 import CreateCategory from "./pages/admin/CreateCategory";
 import Users from "./pages/admin/Users";
+import UpdateProducts from "./pages/admin/UpdateProducts";
 
 import Dashboard from "./pages/user/Dashboard";
 import PrivatePage from "./components/Routes/Private";
@@ -37,6 +38,7 @@ function App() {
         <Route path="admin/create-category" element={<CreateCategory />} />
         <Route path="admin/create-products" element={<CreateProducts />} />
         <Route path="admin/products" element={<Products />} />
+        <Route path="admin/products/:slug" element={<UpdateProducts />} />
         <Route path="admin/users" element={<Users />} />
       </Route>
       <Route path="/login" element={<Login />} />
