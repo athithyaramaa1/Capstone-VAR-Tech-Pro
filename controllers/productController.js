@@ -135,7 +135,14 @@ const productPhotoController = asyncHandler(async (req, res) => {
 
 const deleteProductController = asyncHandler(async (req, res) => {
   try {
-    await Product.findByIdAndDelete(req.params.id).select("-photo");
+    const product = await Product.findByIdAndDelete(req.params.id).select(
+      "-photo"
+    );
+
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
     res.status(202).json({
       message: "Product deleted successfully",
       product,
@@ -156,7 +163,9 @@ const updateProductController = asyncHandler(async (req, res) => {
   }
 
   if (photo && photo.size > 1000000) {
-    return res.status(400).json({ message: "Photo size should be less than 1MB" });
+    return res
+      .status(400)
+      .json({ message: "Photo size should be less than 1MB" });
   }
 
   try {

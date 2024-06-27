@@ -90,7 +90,7 @@ const UpdateProducts = () => {
     getAllCategories();
   }, []);
 
-  const handleClick = async (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
     try {
       const productData = new FormData();
@@ -120,6 +120,35 @@ const UpdateProducts = () => {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      let answer = window.confirm(
+        "Are you sure you want to delete this product?"
+      );
+      if (!answer) return;
+
+      const deleteUrl = `${
+        import.meta.env.VITE_APP_API
+      }api/v1/product/delete-product/${id}`;
+      console.log("Delete URL:", deleteUrl); // Check the constructed URL
+
+      const { data } = await axios.delete(deleteUrl);
+
+      console.log("Delete Response:", data); // Log response from backend
+
+      if (data.message === "Product deleted successfully") {
+        console.log("Product Successfully deleted!!");
+        toast.success("Product Successfully deleted!");
+        navigate("/dashboard/admin/products");
+      } else {
+        toast.error("Error in deleting product");
+      }
+    } catch (error) {
+      console.error("Error message:", error); // Log detailed error message
+      toast.error("Error in deleting product: " + error.message);
+    }
+  };
+
   return (
     <Layout title={`Admin - Update Products`}>
       <div
@@ -140,7 +169,7 @@ const UpdateProducts = () => {
                   placeholder="Select Product's Category"
                   label="Select a Category"
                   variant="outlined"
-                  value={category || ""}
+                  value={category ? category.name : ""}
                   InputLabelProps={{ style: { color: "white" } }}
                   InputProps={{
                     ...params.InputProps,
@@ -375,12 +404,13 @@ const UpdateProducts = () => {
             )}
 
             <Box textAlign="center">
-              <Button variant="solid" color="primary" onClick={handleClick}>
+              <Button variant="solid" color="primary" onClick={handleUpdate}>
                 Update Product
               </Button>
             </Box>
+
             <Box textAlign="center">
-              <Button variant="solid" color="danger" onClick={handleClick}>
+              <Button variant="solid" color="danger" onClick={handleDelete}>
                 Delete Product
               </Button>
             </Box>
