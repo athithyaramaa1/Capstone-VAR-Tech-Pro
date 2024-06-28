@@ -1,4 +1,3 @@
-import * as React from "react";
 import { useState, useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import Layout from "../../components/Layout";
@@ -56,7 +55,10 @@ const Products = () => {
             }}
           >
             {products.map((product) => (
-              <div key={product.id} style={{ width: "100%" }}>
+              <div
+                key={product.id}
+                style={{ width: "100%", marginBottom: "40px" }}
+              >
                 <RouterLink
                   to={`${product.slug}`}
                   style={{ textDecoration: "none" }}
@@ -74,7 +76,7 @@ const Products = () => {
                           alt={product.name}
                           style={{
                             objectFit: "cover",
-                            width: "100%", 
+                            width: "100%",
                             height: "100%",
                           }}
                         />
