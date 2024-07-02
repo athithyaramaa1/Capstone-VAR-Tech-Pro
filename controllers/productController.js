@@ -9,8 +9,9 @@ const validateProductFields = ({
   price,
   category,
   quantity,
+  shipping,
 }) => {
-  return name && description && price && category && quantity;
+  return name && description && price && category && quantity && shipping;
 };
 
 const createProductController = asyncHandler(async (req, res) => {
@@ -203,6 +204,28 @@ const updateProductController = asyncHandler(async (req, res) => {
   }
 });
 
+const productFiltersController = asyncHandler(async (req, res) => {
+  try {
+    const { checked, radio } = req.body;
+    let args = {};
+
+    if (checked.length > 0) args.category = checked;
+    if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
+
+    const products = await Product.find(args)
+      .populate("category")
+      .select("-photo");
+
+    res.status(200).json({
+      success: true,
+      products,
+    });
+  } catch (error) {
+    console.error("Error in filtering products:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = {
   createProductController,
   getProductsController,
@@ -210,4 +233,5 @@ module.exports = {
   productPhotoController,
   deleteProductController,
   updateProductController,
+  productFiltersController,
 };
