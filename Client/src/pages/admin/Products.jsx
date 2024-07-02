@@ -111,7 +111,7 @@ const Products = () => {
                           </Chip>
                         }
                       >
-                        2,900 THB
+                        ${product.price}
                       </Typography>
                       <Typography sx={{ mt: 1 }}>
                         (Limited <b>quantity</b> left in stock!)

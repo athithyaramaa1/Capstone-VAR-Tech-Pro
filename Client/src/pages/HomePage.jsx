@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { Link as RouterLink, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Layout from "../components/Layout";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -13,8 +13,7 @@ import Chip from "@mui/joy/Chip";
 import Link from "@mui/joy/Link";
 import Typography from "@mui/joy/Typography";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
-import { Box, Container, Divider, Grid } from "@mui/material";
-import { useAuth } from "../context/auth";
+import { Box, Divider } from "@mui/material";
 import GlobalStyles from "@mui/joy/GlobalStyles";
 import Avatar from "@mui/joy/Avatar";
 import IconButton from "@mui/joy/IconButton";
@@ -22,17 +21,20 @@ import ListItemButton, { listItemButtonClasses } from "@mui/joy/ListItemButton";
 import Sheet from "@mui/joy/Sheet";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import BrightnessAutoRoundedIcon from "@mui/icons-material/BrightnessAutoRounded";
-import { Checkbox } from "@mui/material";
+import Checkbox from "@mui/joy/Checkbox";
+import { Prices } from "../components/prices";
+import Radio from "@mui/joy/Radio";
+import RadioGroup from "@mui/joy/RadioGroup";
 
 const HomePage = ({ showToast }) => {
   const location = useLocation();
-  const [auth, setAuth] = useAuth();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [checked, setChecked] = useState([]);
+  const [radio, setRadio] = useState([]);
 
   useEffect(() => {
-    if (showToast && location.state && location.state.showToast) {
+    if (showToast && location.state?.showToast) {
       toast.success("Logged in successfully!");
     }
   }, [showToast, location.state]);
@@ -42,7 +44,7 @@ const HomePage = ({ showToast }) => {
       const { data } = await axios.get(
         `${import.meta.env.VITE_APP_API}api/v1/product/get-products`
       );
-      if (data && Array.isArray(data.products)) {
+      if (Array.isArray(data?.products)) {
         setProducts(data.products);
         toast.success("Products retrieved successfully!");
       } else {
@@ -60,7 +62,7 @@ const HomePage = ({ showToast }) => {
       const { data } = await axios.get(
         `${import.meta.env.VITE_APP_API}api/v1/category/categories`
       );
-      if (data && Array.isArray(data.categories)) {
+      if (Array.isArray(data?.categories)) {
         setCategories(data.categories);
       } else {
         console.error("Unexpected response format:", data);
@@ -73,9 +75,54 @@ const HomePage = ({ showToast }) => {
   };
 
   useEffect(() => {
-    getAllProducts();
     getAllCategories();
   }, []);
+
+  useEffect(() => {
+    if (!checked.length && !radio.length) {
+      getAllProducts();
+    } else {
+      getFilteredProducts();
+    }
+  }, [checked, radio]);
+
+  useEffect(() => {
+    console.log("Checked categories:", checked);
+    console.log("Radio value:", radio);
+  }, [checked, radio]);
+
+  const filterByCategory = (isChecked, id) => {
+    if (isChecked) {
+      setChecked([...checked, id]);
+    } else {
+      setChecked(checked.filter((categoryId) => categoryId !== id));
+    }
+  };
+
+  const handleRadioChange = (event) => {
+    const value = JSON.parse(event.target.value);
+    setRadio(value);
+  };
+
+  const getFilteredProducts = async () => {
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_APP_API}api/v1/product/product-filters`,
+        { checked, radio }
+      );
+
+      if (Array.isArray(data?.products)) {
+        setProducts(data.products);
+        toast.success("Filtered products retrieved successfully!");
+      } else {
+        console.error("Unexpected response format:", data);
+        toast.error("Error in getting filtered Products");
+      }
+    } catch (error) {
+      console.error("Error in getting filtered products", error);
+      toast.error("Error in getting filtered Products");
+    }
+  };
 
   return (
     <Layout title={"VAR Tech Pro - Best Offers!"}>
@@ -90,7 +137,7 @@ const HomePage = ({ showToast }) => {
             },
             transition: "transform 0.4s, width 0.4s",
             zIndex: 10000,
-            height: "100dvh",
+            height: "105dvh",
             width: "var(--Sidebar-width)",
             top: 0,
             p: 2,
@@ -120,7 +167,7 @@ const HomePage = ({ showToast }) => {
               top: 0,
               left: 0,
               width: "100vw",
-              height: "100vh",
+              height: "102vh",
               opacity: "var(--SideNavigation-slideIn)",
               backgroundColor: "var(--joy-palette-background-backdrop)",
               transition: "opacity 0.4s",
@@ -143,32 +190,96 @@ const HomePage = ({ showToast }) => {
             {categories.map((category) => (
               <div key={category._id}>
                 <Checkbox
-                  key={category._id}
                   checked={checked.includes(category._id)}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setChecked([...checked, category._id]);
-                    } else {
-                      setChecked(checked.filter((id) => id !== category._id));
-                    }
+                  onChange={(e) =>
+                    filterByCategory(e.target.checked, category._id)
+                  }
+                  sx={{
+                    color: "white",
+                    "& .MuiSvgIcon-root": {
+                      width: 28,
+                      height: 28,
+                    },
                   }}
-                />
-                <label>{category.name}</label>
+                />{" "}
+                <label style={{ fontWeight: 700, fontSize: "1.3rem" }}>
+                  {category.name}
+                </label>
               </div>
             ))}
           </div>
+          <Divider />
+          <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+            <Typography level="title-lg">Filter By Price</Typography>
+          </Box>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <RadioGroup
+              sx={{
+                color: "white",
+                "& .MuiSvgIcon-root": {},
+              }}
+              onChange={handleRadioChange}
+            >
+              {Prices.map((price) => (
+                <div
+                  key={price._id}
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <Radio
+                    size="lg"
+                    value={JSON.stringify(price.array)}
+                    name="price"
+                    sx={{
+                      color: "white",
+                      "& .MuiSvgIcon-root": {
+                        fontSize: 28,
+                      },
+                      "& .MuiRadio-root": {
+                        "& .MuiSvgIcon-root": {
+                          width: "1em",
+                          height: "1em",
+                        },
+                        "& .Mui-checked": {
+                          "&:after": {
+                            content: '""',
+                            display: "block",
+                            position: "relative",
+                            borderRadius: "50%",
+                            width: "8px",
+                            height: "8px",
+                            backgroundColor: "blue",
+                          },
+                        },
+                      },
+                      marginTop:"3px"
+                    }}
+                  />
+                  <Typography sx={{ ml: 1 }}>{price.name}</Typography>
+                  <br />
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+          <Divider />
+            <button onClick={()=>window.location.reload()}>
+              Clear Filters
+            </button>
           <Box
             sx={{
               minHeight: 0,
-              overflow: "hidden auto",
+              overflow: "auto",
               flexGrow: 1,
-              display: "flex",
-              flexDirection: "column",
               [`& .${listItemButtonClasses.root}`]: {
-                gap: 1.5,
+                borderRadius: "sm",
+                whiteSpace: "nowrap",
+                transition: "0.2s",
+                "&:hover": {
+                  boxShadow: "md",
+                  borderColor: "neutral.outlinedHoverBorder",
+                },
               },
             }}
-          ></Box>
+          />
           <Divider />
           <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
             <Avatar
@@ -185,6 +296,7 @@ const HomePage = ({ showToast }) => {
             </IconButton>
           </Box>
         </Sheet>
+
         <div style={{ flex: 1, marginLeft: "70px", padding: "20px" }}>
           <h1 style={{ textAlign: "center" }}>Home</h1>
           <div
@@ -197,7 +309,7 @@ const HomePage = ({ showToast }) => {
           >
             {products.map((product) => (
               <div
-                key={product.id}
+                key={product._id}
                 style={{ width: "100%", marginBottom: "40px" }}
               >
                 <Card
@@ -219,7 +331,6 @@ const HomePage = ({ showToast }) => {
                       />
                     </AspectRatio>
                   </CardOverflow>
-
                   <CardContent>
                     <Typography level="body-xs" sx={{ mb: 1 }}>
                       {product.name}
@@ -232,7 +343,7 @@ const HomePage = ({ showToast }) => {
                       endDecorator={<ArrowOutwardIcon />}
                       sx={{ mb: 1 }}
                     >
-                      {product.description}
+                      {product.description.substring(0, 40)}...
                     </Link>
                     <Typography
                       sx={{ mt: 1, fontWeight: "xl" }}
@@ -247,7 +358,7 @@ const HomePage = ({ showToast }) => {
                         </Chip>
                       }
                     >
-                      2,900 THB
+                      ${product.price}
                     </Typography>
                     <Typography sx={{ mt: 1 }}>
                       (Limited <b>quantity</b> left in stock!)
