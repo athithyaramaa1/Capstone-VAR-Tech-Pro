@@ -25,6 +25,16 @@ import Checkbox from "@mui/joy/Checkbox";
 import { Prices } from "../components/prices";
 import Radio from "@mui/joy/Radio";
 import RadioGroup from "@mui/joy/RadioGroup";
+import { styled } from "@mui/material/styles";
+import { purple } from "@mui/material/colors";
+
+const ColorButton = styled(Button)(({ theme }) => ({
+  color: theme.palette.getContrastText(purple[500]),
+  backgroundColor: purple[500],
+  "&:hover": {
+    backgroundColor: purple[700],
+  },
+}));
 
 const HomePage = ({ showToast }) => {
   const location = useLocation();
@@ -32,30 +42,15 @@ const HomePage = ({ showToast }) => {
   const [categories, setCategories] = useState([]);
   const [checked, setChecked] = useState([]);
   const [radio, setRadio] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (showToast && location.state?.showToast) {
       toast.success("Logged in successfully!");
     }
   }, [showToast, location.state]);
-
-  const getAllProducts = async () => {
-    try {
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_APP_API}api/v1/product/get-products`
-      );
-      if (Array.isArray(data?.products)) {
-        setProducts(data.products);
-        toast.success("Products retrieved successfully!");
-      } else {
-        console.error("Unexpected response format:", data);
-        toast.error("Error in getting Products");
-      }
-    } catch (error) {
-      console.error("Error in getting products", error);
-      toast.error("Error in getting Products");
-    }
-  };
 
   const getAllCategories = async () => {
     try {
@@ -74,8 +69,69 @@ const HomePage = ({ showToast }) => {
     }
   };
 
+  const getAllProducts = async () => {
+    try {
+      setLoading(true);
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_APP_API}api/v1/product/product-lists/${page}`
+      );
+      setLoading(false);
+      setProducts(data.products);
+      toast.success("Products retrieved successfully!");
+    } catch (error) {
+      console.error("Error in getting products", error);
+      toast.error("Error in getting Products");
+      setLoading(false);
+    }
+  };
+
+  const getTotalCount = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_APP_API}api/v1/product/product-count`
+      );
+      if (data?.productCount) {
+        setTotal(data.productCount);
+      } else {
+        console.error("Unexpected response format:", data);
+        toast.error("Error in fetching product count");
+      }
+    } catch (err) {
+      console.error("Error in fetching product count:", err);
+      toast.error("Error in fetching product count");
+    }
+  };
+
+  const loadMore = async () => {
+    try {
+      setLoading(true);
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_APP_API}api/v1/product/product-lists/${page}`
+      );
+      setLoading(false);
+      if (Array.isArray(data?.products)) {
+        setProducts((prevProducts) => [...prevProducts, ...data.products]);
+        toast.success("Products retrieved successfully!");
+      } else {
+        console.error("Unexpected response format:", data);
+        toast.error("Error in getting Products");
+      }
+    } catch (error) {
+      console.error("Error in getting products", error);
+      toast.error("Error in getting Products");
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (page > 1) {
+      loadMore();
+    }
+  }, [page]);
+
   useEffect(() => {
     getAllCategories();
+    getTotalCount();
   }, []);
 
   useEffect(() => {
@@ -251,7 +307,7 @@ const HomePage = ({ showToast }) => {
                           },
                         },
                       },
-                      marginTop:"3px"
+                      marginTop: "3px",
                     }}
                   />
                   <Typography sx={{ ml: 1 }}>{price.name}</Typography>
@@ -261,9 +317,9 @@ const HomePage = ({ showToast }) => {
             </RadioGroup>
           </div>
           <Divider />
-            <button onClick={()=>window.location.reload()}>
-              Clear Filters
-            </button>
+          <ColorButton onClick={() => window.location.reload()}>
+            Clear Filters
+          </ColorButton>
           <Box
             sx={{
               minHeight: 0,
@@ -299,6 +355,7 @@ const HomePage = ({ showToast }) => {
 
         <div style={{ flex: 1, marginLeft: "70px", padding: "20px" }}>
           <h1 style={{ textAlign: "center" }}>Home</h1>
+          {/* <h1>{total}</h1> */}
           <div
             style={{
               display: "grid",
@@ -379,6 +436,19 @@ const HomePage = ({ showToast }) => {
               </div>
             ))}
             <Divider />
+          </div>
+          <div style={{ margin: 3, padding: 2 }}>
+            {products.length < total && (
+              <ColorButton
+                variant="contained"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setPage(page + 1);
+                }}
+              >
+                {loading ? "Loading..." : "Load More"}
+              </ColorButton>
+            )}
           </div>
         </div>
       </div>

@@ -226,6 +226,51 @@ const productFiltersController = asyncHandler(async (req, res) => {
   }
 });
 
+const productCountController = asyncHandler(async (req, res) => {
+  try {
+    const productCount = await Product.find({}).estimatedDocumentCount();
+
+    if (!productCount) {
+      return res.status(404).json({ message: "No products found" });
+    }
+
+    res.status(200).json({
+      message: "Total products",
+      productCount,
+    });
+  } catch (err) {
+    console.error("Error in fetching product count:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+const productListController = asyncHandler(async (req, res) => {
+  try {
+    const page = req.params.page ? req.params.page : 1; 
+    const perPage = 6;
+
+    const products = await Product.find({})
+      .skip(perPage * (page - 1))
+      .limit(perPage)
+      .populate("category")
+      .select("-photo")
+      .sort({ createdAt: -1 });
+
+    if (!products.length) {
+      return res.status(404).json({ message: "No products found" });
+    }
+
+    res.status(200).json({
+      message: "All products",
+      totalProducts: products.length,
+      products,
+    });
+  } catch (err) {
+    console.error("Error in fetching products:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = {
   createProductController,
   getProductsController,
@@ -234,4 +279,6 @@ module.exports = {
   deleteProductController,
   updateProductController,
   productFiltersController,
+  productCountController,
+  productListController,
 };
