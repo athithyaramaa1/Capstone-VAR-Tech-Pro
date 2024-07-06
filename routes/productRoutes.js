@@ -13,6 +13,8 @@ const {
   deleteProductController,
   updateProductController,
   productFiltersController,
+  productCountController,
+  productListController,
 } = require("../controllers/productController");
 
 const router = express.Router();
@@ -47,5 +49,9 @@ router.put(
 );
 
 router.post("/product-filters", productFiltersController);
+
+router.get("/product-count", productCountController);
+
+router.get(`/product-lists/:page`, productListController);
 
 module.exports = router;
