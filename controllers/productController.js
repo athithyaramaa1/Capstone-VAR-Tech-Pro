@@ -246,7 +246,7 @@ const productCountController = asyncHandler(async (req, res) => {
 
 const productListController = asyncHandler(async (req, res) => {
   try {
-    const page = req.params.page ? req.params.page : 1; 
+    const page = req.params.page ? req.params.page : 1;
     const perPage = 6;
 
     const products = await Product.find({})
@@ -271,6 +271,22 @@ const productListController = asyncHandler(async (req, res) => {
   }
 });
 
+const searchProductController = asyncHandler(async (req, res) => {
+  try {
+    const { keyword } = req.params;
+    const result = await Product.find({
+      $or: [
+        { name: { $regex: keyword, $options: "i" } },
+        { description: { $regex: keyword, $options: "i" } },
+      ],
+    }).select("-photo");
+    res.json(result);
+  } catch (err) {
+    console.error("Error in searching products:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = {
   createProductController,
   getProductsController,
@@ -281,4 +297,5 @@ module.exports = {
   productFiltersController,
   productCountController,
   productListController,
+  searchProductController,
 };

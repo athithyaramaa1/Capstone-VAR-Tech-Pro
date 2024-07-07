@@ -12,16 +12,14 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import ComputerIcon from "@mui/icons-material/Computer";
-import SearchIcon from "@mui/icons-material/Search";
-import TextField from "@mui/material/TextField";
 import { useAuth } from "../context/auth";
 import { toast } from "react-toastify";
 import { KeyboardArrowDown } from "@mui/icons-material";
+import SearchInput from "./Forms/SearchInput";
 
 function Header() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedTab, setSelectedTab] = React.useState("Home");
   const [auth, setAuth] = useAuth();
   const navigate = useNavigate();
@@ -36,14 +34,6 @@ function Header() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
-  };
-
-  const handleSearchInputChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
-  const handleSearchSubmit = () => {
-    console.log("Search query:", searchQuery);
   };
 
   const handleMenuClick = (page) => {
@@ -66,10 +56,10 @@ function Header() {
   };
 
   const handleDashboard = () => {
-    navigate(`/dashboard/${auth?.user?.role === 1 ? 'admin' : 'user'}`);
-    console.log(auth?.user)
+    navigate(`/dashboard/${auth?.user?.role === 1 ? "admin" : "user"}`);
+    console.log(auth?.user);
   };
-  
+
   //For the dropdown menu
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -149,41 +139,8 @@ function Header() {
               Category
             </Button>
           </Box>
-          <Box
-            sx={{
-              flexGrow: 4,
-              display: "flex",
-              alignItems: "center",
-              marginRight: { xs: "50px", md: "100px" },
-              borderRadius: { xs: "10px", md: "4px" },
-            }}
-          >
-            <TextField
-              id="search"
-              label="Search"
-              variant="outlined"
-              value={searchQuery}
-              onChange={handleSearchInputChange}
-              fullWidth
-              size="small"
-              sx={{
-                bgcolor: "white",
-                color: "black",
-                borderRadius: "inherit",
-              }}
-            />
-            <IconButton
-              aria-label="search"
-              onClick={handleSearchSubmit}
-              sx={{
-                p: 1,
-                bgcolor: "orange",
-                "&:hover": { bgcolor: "lightcoral" },
-              }}
-            >
-              <SearchIcon sx={{ color: "black" }} />
-            </IconButton>
-          </Box>
+          {/* Search Box moved to global state */}
+          <SearchInput />
           <Box sx={{ display: "flex", alignItems: "center" }}>
             {auth.user ? (
               <>
@@ -194,14 +151,14 @@ function Header() {
                     aria-haspopup="true"
                     aria-expanded={open ? "true" : undefined}
                     onClick={handleClick}
-                    sx={{color: "Yellow"}}
+                    sx={{ color: "Yellow" }}
                   >
                     {auth?.user?.name}
                     <KeyboardArrowDown
-                    sx={{ transform: open ? "rotate(180deg)" : "none" }}
-                  />
+                      sx={{ transform: open ? "rotate(180deg)" : "none" }}
+                    />
                   </Button>
-                  
+
                   <Menu
                     id="basic-menu"
                     anchorEl={anchorEl}
