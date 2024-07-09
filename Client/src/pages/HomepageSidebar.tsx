@@ -17,24 +17,9 @@ import GroupRoundedIcon from "@mui/icons-material/GroupRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import BrightnessAutoRoundedIcon from "@mui/icons-material/BrightnessAutoRounded";
 import { useNavigate } from "react-router-dom";
+import { Checkbox } from "@mui/material";
 
-export default function Sidebar() {
-  const navigate = useNavigate();
-  const handleHome = () => {
-    navigate("/home");
-  };
-  const handleCategory = () => {
-    navigate("/dashboard/admin/create-category");
-  };
-  const handleCreateProducts = () => {
-    navigate("/dashboard/admin/create-products");
-  };
-  const handleProducts = () => {
-    navigate("/dashboard/admin/products");
-  };
-  const handleUsers = () => {
-    navigate("/dashboard/admin/users");
-  };
+export default function HomepageSidebar() {
   return (
     <Sheet
       className="Sidebar"
@@ -90,70 +75,30 @@ export default function Sidebar() {
         <IconButton variant="soft" color="primary" size="sm">
           <BrightnessAutoRoundedIcon />
         </IconButton>
-        <Typography level="title-lg">VAR Tech Pro - Admin</Typography>
+        <Typography level="title-lg">VAR Tech Pro</Typography>
       </Box>
-      <Box
-        sx={{
-          minHeight: 0,
-          overflow: "hidden auto",
-          flexGrow: 1,
-          display: "flex",
-          flexDirection: "column",
-          [`& .${listItemButtonClasses.root}`]: {
-            gap: 1.5,
-          },
-        }}
-      >
-        <List
-          size="sm"
-          sx={{
-            gap: 1,
-            "--List-nestedInsetStart": "30px",
-            "--ListItem-radius": (theme) => theme.vars.radius.sm,
-          }}
-        >
-          <ListItem>
-            <ListItemButton onClick={handleHome}>
-              <HomeRoundedIcon />
-              <ListItemContent>
-                <Typography level="title-sm">Home</Typography>
-              </ListItemContent>
-            </ListItemButton>
-          </ListItem>
+      <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+        <Typography level="title-lg">Filter By Category</Typography>
+      </Box>
+      <div style={{display:"flex", flexDirection:"column"}}>
+        
+        <Checkbox>
 
-          <ListItem>
-            <ListItemButton onClick={handleCategory}>
-              <DashboardRoundedIcon />
-              <ListItemContent>
-                <Typography level="title-sm">Create Category</Typography>
-              </ListItemContent>
-            </ListItemButton>
-          </ListItem>
-          <ListItem>
-            <ListItemButton onClick={handleCreateProducts}>
-              <AssignmentRoundedIcon />
-              <ListItemContent>
-                <Typography level="title-sm">Create Products</Typography>
-              </ListItemContent>
-            </ListItemButton>
-          </ListItem>
-          <ListItem>
-            <ListItemButton onClick={handleProducts}>
-              <AssignmentRoundedIcon />
-              <ListItemContent>
-                <Typography level="title-sm">Products</Typography>
-              </ListItemContent>
-            </ListItemButton>
-          </ListItem>
-          <ListItem>
-            <ListItemButton onClick={handleUsers}>
-              <GroupRoundedIcon />
-              <ListItemContent>
-                <Typography level="title-sm">Users</Typography>
-              </ListItemContent>
-            </ListItemButton>
-          </ListItem>
-        </List>
+        </Checkbox>
+      </div>
+      <Box
+      sx={{
+        minHeight: 0,
+        overflow: "hidden auto",
+        flexGrow: 1,
+        display: "flex",
+        flexDirection: "column",
+        [`& .${listItemButtonClasses.root}`]: {
+          gap: 1.5,
+        },
+      }}
+      >
+
       </Box>
       <Divider />
       <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>

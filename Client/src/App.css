@@ -30,3 +30,14 @@
   background-color: rgb(255, 255, 255);
   color: rgb(0, 0, 0);
 }
+
+.icons {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-right: 5%;
+}
+
+.placeholder-text-color {
+  color: black !important;
+}

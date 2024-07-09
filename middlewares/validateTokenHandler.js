@@ -31,6 +31,7 @@ const validateToken = asyncHandler(async (req, res, next) => {
 });
 
 const isAdmin = asyncHandler(async (req, res, next) => {
+  console.log("API endpoint")
   try {
     if (!process.env.JWT_SECRET) {
       console.error("JWT_SECRET is not set in environment variables.");

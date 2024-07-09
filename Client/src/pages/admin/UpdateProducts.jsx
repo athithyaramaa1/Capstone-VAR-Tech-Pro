@@ -17,10 +17,11 @@ import CardContent from "@mui/joy/CardContent";
 import CardOverflow from "@mui/joy/CardOverflow";
 import Typography from "@mui/joy/Typography";
 import Box from "@mui/material/Box";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const CreateProducts = () => {
+const UpdateProducts = () => {
   const navigate = useNavigate();
+  const params = useParams();
   const [categories, setCategories] = useState([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -29,6 +30,7 @@ const CreateProducts = () => {
   const [quantity, setQuantity] = useState("");
   const [photo, setPhoto] = useState(null);
   const [shipping, setShipping] = useState("");
+  const [id, setId] = useState("");
 
   const VisuallyHiddenInput = styled("input")`
     clip: rect(0 0 0 0);
@@ -59,11 +61,36 @@ const CreateProducts = () => {
     }
   };
 
+  const getSingleCategory = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_APP_API}api/v1/product/get-product/${
+          params.slug
+        }`
+      );
+      console.log("Single Category Data", data);
+      setName(data.product.name);
+      setId(data.product._id);
+      setDescription(data.product.description);
+      setPrice(data.product.price);
+      setQuantity(data.product.quantity);
+      setCategory(data.product.category);
+      setShipping(data.product.shipping);
+    } catch (err) {
+      console.log("Error in getting single category", err);
+    }
+  };
+
+  useEffect(() => {
+    getSingleCategory();
+    //eslint-disable-next-line
+  }, []);
+
   useEffect(() => {
     getAllCategories();
   }, []);
 
-  const handleClick = async (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
     try {
       const productData = new FormData();
@@ -72,35 +99,64 @@ const CreateProducts = () => {
       productData.append("price", price);
       productData.append("quantity", quantity);
       productData.append("category", category._id || category);
-      productData.append("photo", photo);
+      photo && productData.append("photo", photo);
       productData.append("shipping", shipping);
 
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_APP_API}api/v1/product/create-product`,
+      const { data } = await axios.put(
+        `${import.meta.env.VITE_APP_API}api/v1/product/update-product/${id}`,
         productData
       );
 
       if (data) {
-        console.log("Product Successfully created!!");
-        toast.success("Product Successfully created!");
+        console.log("Product Successfully updated!!");
+        toast.success("Product Successfully updated!");
         navigate("/dashboard/admin/products");
       } else {
-        toast.error("Error in creating product");
+        toast.error("Error in updating product");
       }
     } catch (err) {
-      console.log("Error in creating product", err);
-      toast.error("Error in creating product");
+      console.log("Error in updating product", err);
+      toast.error("Error in updating product");
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      let answer = window.confirm(
+        "Are you sure you want to delete this product?"
+      );
+      if (!answer) return;
+
+      const deleteUrl = `${
+        import.meta.env.VITE_APP_API
+      }api/v1/product/delete-product/${id}`;
+      console.log("Delete URL:", deleteUrl); // Check the constructed URL
+
+      const { data } = await axios.delete(deleteUrl);
+
+      console.log("Delete Response:", data); // Log response from backend
+
+      if (data.message === "Product deleted successfully") {
+        console.log("Product Successfully deleted!!");
+        toast.success("Product Successfully deleted!");
+        navigate("/dashboard/admin/products");
+      } else {
+        toast.error("Error in deleting product");
+      }
+    } catch (error) {
+      console.error("Error message:", error); // Log detailed error message
+      toast.error("Error in deleting product: " + error.message);
     }
   };
 
   return (
-    <Layout title={`Admin - Create Products`}>
+    <Layout title={`Admin - Update Products`}>
       <div
         style={{ display: "flex", backgroundColor: "black", color: "white" }}
       >
         <Sidebar />
         <div style={{ flex: 1, marginLeft: "70px", padding: "20px" }}>
-          <h1 style={{ textAlign: "center" }}>Manage Products</h1>
+          <h1 style={{ textAlign: "center" }}>Update Product</h1>
           <Stack spacing={3}>
             <Autocomplete
               size="lg"
@@ -113,6 +169,7 @@ const CreateProducts = () => {
                   placeholder="Select Product's Category"
                   label="Select a Category"
                   variant="outlined"
+                  value={category ? category.name : ""}
                   InputLabelProps={{ style: { color: "white" } }}
                   InputProps={{
                     ...params.InputProps,
@@ -255,7 +312,7 @@ const CreateProducts = () => {
               label="Shipping"
               variant="outlined"
               fullWidth
-              value={shipping}
+              value={shipping ? "Yes" : "No"}
               onChange={(e) => setShipping(e.target.value)}
               InputLabelProps={{ style: { color: "white" } }}
               InputProps={{
@@ -311,7 +368,7 @@ const CreateProducts = () => {
               />
             </Button>
 
-            {photo && (
+            {photo ? (
               <Card variant="outlined" sx={{ width: 320, margin: "0 auto" }}>
                 <CardOverflow>
                   <AspectRatio ratio="2">
@@ -327,11 +384,34 @@ const CreateProducts = () => {
                   <Typography level="title-md">{photo?.name}</Typography>
                 </CardContent>
               </Card>
+            ) : (
+              <CardOverflow>
+                <AspectRatio ratio="4/3" sx={{ minWidth: 200 }}>
+                  <img
+                    src={`${
+                      import.meta.env.VITE_APP_API
+                    }api/v1/product/product-photo/${id}`}
+                    loading="lazy"
+                    alt={name}
+                    style={{
+                      objectFit: "cover",
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  />
+                </AspectRatio>
+              </CardOverflow>
             )}
 
             <Box textAlign="center">
-              <Button variant="solid" color="primary" onClick={handleClick}>
-                Create Product
+              <Button variant="solid" color="primary" onClick={handleUpdate}>
+                Update Product
+              </Button>
+            </Box>
+
+            <Box textAlign="center">
+              <Button variant="solid" color="danger" onClick={handleDelete}>
+                Delete Product
               </Button>
             </Box>
           </Stack>
@@ -341,4 +421,4 @@ const CreateProducts = () => {
   );
 };
 
-export default CreateProducts;
+export default UpdateProducts;

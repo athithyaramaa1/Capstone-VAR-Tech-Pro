@@ -13,11 +13,14 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import CreateProducts from "./pages/admin/CreateProducts";
 import CreateCategory from "./pages/admin/CreateCategory";
 import Users from "./pages/admin/Users";
+import UpdateProducts from "./pages/admin/UpdateProducts";
 
 import Dashboard from "./pages/user/Dashboard";
 import PrivatePage from "./components/Routes/Private";
 import Orders from "./pages/user/Orders";
 import UserProfile from "./pages/user/UserProfile";
+import Products from "./pages/admin/Products";
+import Searched from "./pages/Searched";
 
 function App() {
   return (
@@ -26,6 +29,7 @@ function App() {
       <Route path="/home" element={<HomePage />} />
       <Route path="/about" element={<About />} />
       <Route path="/policy" element={<Policy />} />
+      <Route path="/search" element={<Searched />} />
       <Route path="/dashboard" element={<PrivatePage />}>
         <Route path="user" element={<Dashboard />} />
         <Route path="user/orders" element={<Orders />} />
@@ -35,6 +39,8 @@ function App() {
         <Route path="admin" element={<AdminDashboard />} />
         <Route path="admin/create-category" element={<CreateCategory />} />
         <Route path="admin/create-products" element={<CreateProducts />} />
+        <Route path="admin/products" element={<Products />} />
+        <Route path="admin/products/:slug" element={<UpdateProducts />} />
         <Route path="admin/users" element={<Users />} />
       </Route>
       <Route path="/login" element={<Login />} />
