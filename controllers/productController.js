@@ -287,6 +287,20 @@ const searchProductController = asyncHandler(async (req, res) => {
   }
 });
 
+const similarProducts = asyncHandler(async(req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+    const similar = await Product.find({ category: product.category }).limit(3);
+    res.json(similar);
+  } catch (err) {
+    console.error("Error in fetching similar products:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = {
   createProductController,
   getProductsController,
@@ -298,4 +312,5 @@ module.exports = {
   productCountController,
   productListController,
   searchProductController,
+  similarProducts,
 };
