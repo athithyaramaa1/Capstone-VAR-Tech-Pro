@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -34,6 +34,9 @@ const ColorButton = styled(Button)(({ theme }) => ({
   "&:hover": {
     backgroundColor: purple[700],
   },
+  "& .MuiButtonBase-root": {
+    cursor: "pointer",
+  },
 }));
 
 const HomePage = ({ showToast }) => {
@@ -45,6 +48,7 @@ const HomePage = ({ showToast }) => {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (showToast && location.state?.showToast) {
@@ -420,6 +424,9 @@ const HomePage = ({ showToast }) => {
                     <Typography sx={{ mt: 1 }}>
                       (Limited <b>quantity</b> left in stock!)
                     </Typography>
+                    <Button onClick={() => navigate(`/product/${product.slug}`)} sx={{marginTop:"15px", marginBottom:"-20px"}}>
+                      View Product
+                    </Button>
                   </CardContent>
                   <CardOverflow
                     sx={{
