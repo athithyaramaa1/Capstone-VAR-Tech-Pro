@@ -287,9 +287,18 @@ const searchProductController = asyncHandler(async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 const similarProducts = asyncHandler(async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
+=======
+const similarProducts = asyncHandler(async(req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+>>>>>>> 2cbae6a41fbe6a0555fe4c3d7040fbd189714fcd
     const similar = await Product.find({ category: product.category }).limit(3);
     res.json(similar);
   } catch (err) {
@@ -309,4 +318,5 @@ module.exports = {
   productCountController,
   productListController,
   searchProductController,
+  similarProducts,
 };
