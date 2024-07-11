@@ -1,4 +1,3 @@
-
 const express = require("express");
 const formidable = require("express-formidable");
 
@@ -17,7 +16,7 @@ const {
   productCountController,
   productListController,
   searchProductController,
-  similarProducts 
+  similarProducts,
 } = require("../controllers/productController");
 
 const router = express.Router();
@@ -37,7 +36,6 @@ router.get("/product-photo/:pid", productPhotoController);
 router.get("/get-product/:slug", getProductController);
 
 router.get("/related-product/:pid/:cid", similarProducts);
-
 
 router.delete(
   "/delete-product/:id",
@@ -62,5 +60,7 @@ router.get(`/product-lists/:page`, productListController);
 
 //search Products
 router.get("/search/:keyword", searchProductController);
+
+router.get("/related-product/:pid/:cid", similarProducts);
 
 module.exports = router;
