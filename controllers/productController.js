@@ -287,14 +287,27 @@ const searchProductController = asyncHandler(async (req, res) => {
   }
 });
 
-const similarProducts = asyncHandler(async(req, res) => {
+const similarProducts = asyncHandler(async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
-    if (!product) {
-      return res.status(404).json({ error: "Product not found" });
+    const { pid, cid } = req.params;
+    console.log("Fetching similar products with pid:", pid, "and cid:", cid);
+
+    const products = await Product.find({
+      category: cid,
+      _id: { $ne: pid }, // Exclude the current product
+    })
+      .select("-photo")
+      .limit(3)
+      .populate("category");
+
+    console.log("Found products:", products);
+
+    if (!products.length) {
+      console.log("No similar products found for pid:", pid, "and cid:", cid);
+      return res.status(404).json({ message: "No similar products found" });
     }
-    const similar = await Product.find({ category: product.category }).limit(3);
-    res.json(similar);
+
+    res.status(200).json(products);
   } catch (err) {
     console.error("Error in fetching similar products:", err);
     res.status(500).json({ error: "Internal server error" });
