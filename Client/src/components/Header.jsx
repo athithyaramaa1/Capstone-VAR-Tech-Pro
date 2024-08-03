@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -9,20 +9,30 @@ import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import ComputerIcon from "@mui/icons-material/Computer";
 import { useAuth } from "../context/auth";
 import { toast } from "react-toastify";
 import { KeyboardArrowDown } from "@mui/icons-material";
 import SearchInput from "./Forms/SearchInput";
+import useCategory from "../hooks/useCategory";
 
 function Header() {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const [selectedTab, setSelectedTab] = React.useState("Home");
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [selectedTab, setSelectedTab] = useState("Home");
   const [auth, setAuth] = useAuth();
   const navigate = useNavigate();
+  const categories = useCategory().categories;
+  const [anchorElCustom, setAnchorElCustom] = useState(null);
+  const openCustom = Boolean(anchorElCustom);
+
+  const handleClickCustom = (event) => {
+    setAnchorElCustom(event.currentTarget);
+  };
+
+  const handleCloseCustom = () => {
+    setAnchorElCustom(null);
+  };
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -30,10 +40,6 @@ function Header() {
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
   };
 
   const handleMenuClick = (page) => {
@@ -60,8 +66,8 @@ function Header() {
     console.log(auth?.user);
   };
 
-  //For the dropdown menu
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  // For the dropdown menu
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -69,6 +75,20 @@ function Header() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (anchorElCustom && !anchorElCustom.contains(event.target)) {
+        setAnchorElCustom(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [anchorElCustom]);
 
   return (
     <AppBar position="static" sx={{ bgcolor: "black" }} className="container">
@@ -119,28 +139,56 @@ function Header() {
             >
               Home
             </Button>
-            <Button
-              component={Link}
-              to="/category"
-              sx={{
-                my: 2,
-                color: selectedTab === "Category" ? "white" : "inherit",
-                borderBottom:
-                  selectedTab === "Category" ? "2px solid white" : "none",
-                display: "block",
-                transition: "color 0.3s, background-color 0.3s",
-                "&:hover": {
-                  color: "black",
-                  backgroundColor: "white",
-                },
-              }}
-              onClick={() => handleMenuClick("Category")}
-            >
-              Category
-            </Button>
+            <div>
+              <Button
+                component={Link}
+                to="/categories"
+                id="customized-button"
+                aria-controls={openCustom ? "customized-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={openCustom ? "true" : undefined}
+                onClick={handleClickCustom}
+                sx={{
+                  m: 2,
+                  color: selectedTab === "Category" ? "white" : "inherit",
+                  borderBottom:
+                    selectedTab === "Category" ? "2px solid white" : "none",
+                  display: "block",
+                  transition: "color 0.3s, background-color 0.3s",
+                  "&:hover": {
+                    color: "black",
+                    backgroundColor: "white",
+                  },
+                }}
+              >
+                Category
+              </Button>
+              <Menu
+                component={Link}
+                id="customized-menu"
+                anchorEl={anchorElCustom}
+                open={openCustom}
+                onClose={handleCloseCustom}
+                MenuListProps={{
+                  "aria-labelledby": "customized-button",
+                }}
+              >
+                {categories.map((category, index) => (
+                  <MenuItem
+                    key={index}
+                    component={Link}
+                    to={`/category/${category.slug}`}
+                  >
+                    {category.name}
+                  </MenuItem>
+                ))}
+              </Menu>
+            </div>
           </Box>
+
           {/* Search Box moved to global state */}
           <SearchInput />
+
           <Box sx={{ display: "flex", alignItems: "center" }}>
             {auth.user ? (
               <>
@@ -270,61 +318,6 @@ function Header() {
               >
                 <Typography textAlign="center">Category</Typography>
               </MenuItem>
-            </Menu>
-          </Box>
-
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings"></Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              <MenuItem
-                onClick={() => {
-                  handleMenuClick("Profile");
-                  handleCloseUserMenu();
-                }}
-              >
-                <Typography textAlign="center">Profile</Typography>
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  handleMenuClick("Account");
-                  handleCloseUserMenu();
-                }}
-              >
-                <Typography textAlign="center">Account</Typography>
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  handleMenuClick("Dashboard");
-                  handleCloseUserMenu();
-                }}
-              >
-                <Typography textAlign="center">Dashboard</Typography>
-              </MenuItem>
-              {auth.user && (
-                <MenuItem
-                  onClick={() => {
-                    handleLogout();
-                    handleCloseUserMenu();
-                  }}
-                >
-                  <Typography textAlign="center">Logout</Typography>
-                </MenuItem>
-              )}
             </Menu>
           </Box>
         </Toolbar>

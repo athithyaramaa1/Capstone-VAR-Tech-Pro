@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
 const Product = require("../models/productModel");
 const fs = require("fs");
+const Category = require("../models/categoryModel");
 
 const validateProductFields = ({
   name,
@@ -294,7 +295,7 @@ const similarProducts = asyncHandler(async (req, res) => {
 
     const products = await Product.find({
       category: cid,
-      _id: { $ne: pid }, // Exclude the current product
+      _id: { $ne: pid },
     })
       .select("-photo")
       .limit(3)
@@ -314,6 +315,27 @@ const similarProducts = asyncHandler(async (req, res) => {
   }
 });
 
+const productCategoryController = asyncHandler(async (req, res) => {
+  try {
+    const category = await Category.findOne({ slug: req.params.slug });
+
+    if (!category) {
+      return res.status(404).json({ message: "No category found" });
+    }
+
+    const products = await Product.find({ category }).populate("category");
+
+    res.status(200).json({
+      message: "Category and products fetched",
+      category,
+      products,
+    });
+  } catch (error) {
+    console.error("Error fetching category and products:", error);
+    res.status(500).json({ message: "Error fetching data" });
+  }
+});
+
 module.exports = {
   createProductController,
   getProductsController,
@@ -326,4 +348,5 @@ module.exports = {
   productListController,
   searchProductController,
   similarProducts,
+  productCategoryController,
 };
