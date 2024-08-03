@@ -14,6 +14,7 @@ import CreateProducts from "./pages/admin/CreateProducts";
 import CreateCategory from "./pages/admin/CreateCategory";
 import Users from "./pages/admin/Users";
 import UpdateProducts from "./pages/admin/UpdateProducts";
+import Category from "./pages/Category";
 
 import Dashboard from "./pages/user/Dashboard";
 import PrivatePage from "./components/Routes/Private";
@@ -22,6 +23,7 @@ import UserProfile from "./pages/user/UserProfile";
 import Products from "./pages/admin/Products";
 import Searched from "./pages/Searched";
 import ProductDetails from "./pages/ProductDetails";
+import IndividualCategory from "./pages/IndividualCategory";
 
 function App() {
   return (
@@ -32,6 +34,8 @@ function App() {
       <Route path="/policy" element={<Policy />} />
       <Route path="/search" element={<Searched />} />
       <Route path="/product/:slug" element={<ProductDetails />} />
+      <Route path="/categories" element={<Category />} />
+      <Route path="/category/:slug" element={<IndividualCategory />} />
       <Route path="/dashboard" element={<PrivatePage />}>
         <Route path="user" element={<Dashboard />} />
         <Route path="user/orders" element={<Orders />} />
