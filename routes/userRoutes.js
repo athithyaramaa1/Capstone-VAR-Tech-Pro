@@ -10,9 +10,10 @@ const {
   isAdmin,
 } = require("../middlewares/validateTokenHandler");
 const router = express.Router();
+import apiLimiter from '../middlewares/rateLimiter';
 
-router.post("/register", registerUser);
-router.post("/login", loginUser);
+router.post("/register",apiLimiter, registerUser);
+router.post("/login",apiLimiter, loginUser);
 router.post("/test", validateToken, isAdmin, testController);
 router.post("/forgot-password", forgotPasswordController);
 
